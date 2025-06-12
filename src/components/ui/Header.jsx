@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import logo from "../../assets/logo.png";
@@ -6,9 +6,18 @@ import profileIcon from "../../assets/profile-image.jpg";
 import downIcon from "../../assets/down.svg";
 import searchIcon from "../../assets/search.svg";
 import Crown from "../presentational/Crown";
+import { useSearch } from "../../contexts/useSearchContext";
 
 function Header() {
-  const [searchInput, setSearchInput] = useState("");
+  const { setSearchInput, searchInput } = useSearch();
+
+  const navigate = useNavigate();
+
+  function handleChange() {
+    if (searchInput.length >= 2) {
+      navigate("search");
+    }
+  }
 
   return (
     <>
@@ -99,9 +108,10 @@ function Header() {
                 type="text"
                 placeholder="Search"
                 value={searchInput}
-                onChange={(e) =>
-                  setSearchInput(e.target.value)
-                }
+                onChange={(e) => {
+                  setSearchInput(e.target.value);
+                  handleChange();
+                }}
                 className="outline-none bg-[#21242D] border border-[#292931]
                   rounded-[3.5px] h-[2.125rem] w-[16.15rem] pl-[2.55rem]
                   placeholder:text-gray-500 text-[#f9fafc] text-[.85rem]"

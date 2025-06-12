@@ -5,6 +5,7 @@ import unwatched from "../../assets/unwatched.svg";
 import watched from "../../assets/watched.svg";
 import emptyheart from "../../assets/emptyHeart.svg";
 import filledHeart from "../../assets/filledHeart.svg";
+import sub from "../../assets/wonder.jpg";
 
 import { truncateTitle } from "../../utils/truncateTitle";
 const baseUrl = "https://image.tmdb.org/t/p/w300";
@@ -13,7 +14,6 @@ function MediaCard({ media }) {
   const [isWatched, setIsWatched] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
-  console.log(media);
   // generally related
   const rawTitle =
     media.title || media.name || media.title_english;
@@ -50,17 +50,19 @@ function MediaCard({ media }) {
           style={{
             backgroundImage: poster_path
               ? `url(${baseUrl}${poster_path})`
-              : `url(${anime_poster})`,
+              : anime_poster
+                ? `url(${anime_poster})`
+                : `url(${sub})`,
           }}
         >
           <div>
             <div
               className="bg-[#0b0c0e] h-6 w-6 absolute top-1 right-1 rounded-full
-                border-2 border-[#373942] flex items-center justify-center
+                border-2 border-[#3e4237] flex items-center justify-center
                 pt-[1px]"
             >
               <span className="inline-block text-[.6rem] font-bold">
-                {rating}
+                {Number.isNaN(rating) ? "n/a" : rating}
               </span>
             </div>
             <img
@@ -124,7 +126,7 @@ function MediaCard({ media }) {
                   ? `SS ${number_of_seasons}` // Else, if number_of_seasons exists
                   : animeType
                     ? `${animeType}`
-                    : ""}
+                    : "N/A"}
             </span>
           </div>
         </div>

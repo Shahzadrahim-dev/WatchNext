@@ -10,13 +10,22 @@ import AnimesPage from "./pages/AnimesPage";
 import MoviesPage from "./pages/MoviesPage";
 import TrendingsPage from "./pages/TrendingsPage";
 import TVShowsPage from "./pages/TVShowsPage";
+import SearchResultPage from "./pages/SearchResultPage";
+import { SearchProvider } from "./contexts/useSearchContext";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MainLayout />}>
+          <Route
+            path="/"
+            element={
+              <SearchProvider>
+                <MainLayout />
+              </SearchProvider>
+            }
+          >
             <Route
               index
               element={<Navigate to="movies" replace />}
@@ -30,6 +39,10 @@ function App() {
             <Route
               path="trending"
               element={<TrendingsPage />}
+            />
+            <Route
+              path="search"
+              element={<SearchResultPage />}
             />
           </Route>
         </Routes>

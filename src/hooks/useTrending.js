@@ -16,15 +16,15 @@ async function fetchDetails(item, options) {
   }
 }
 
-function useTrending() {
-  const [trending, setTrending] = useState([]);
+export function useTrending() {
+  const [trendings, setTrendings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useEffect(function () {
     const controller = new AbortController();
 
-    async function fetchTrending() {
+    async function fetchTrendings() {
       const token = import.meta.env.VITE_TMDB_API_TOKEN;
 
       setIsLoading(true);
@@ -55,15 +55,13 @@ function useTrending() {
             (item) => item.media_type !== "person",
           ) || [];
 
-        console.log(filteredData);
-
         const detailedFilteredData = await Promise.all(
           filteredData.map((item) =>
             fetchDetails(item, options),
           ),
         );
 
-        setTrending(detailedFilteredData.filter(Boolean));
+        setTrendings(detailedFilteredData.filter(Boolean));
       } catch (e) {
         if (e.name !== "AbortError") {
           console.log(e.message);
@@ -76,14 +74,12 @@ function useTrending() {
       }
     }
 
-    fetchTrending();
+    fetchTrendings();
 
     return () => {
       controller.abort();
     };
   }, []);
 
-  return { trending, isLoading, isError };
+  return { trendings, isLoading, isError };
 }
-
-export default useTrending;

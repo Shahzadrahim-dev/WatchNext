@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useTVShows() {
+export function useTVShows() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [tvShows, setTVShows] = useState([]);

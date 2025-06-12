@@ -1,11 +1,11 @@
-import useMovies from "../hooks/useMovies";
+import { useMovies } from "../hooks/useMovies";
 import CardGridContainer from "../components/presentational/CardGridContainer";
 import MediaCard from "../components/presentational/MediaCard";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
 
 function MoviesPage() {
-  const { isLoading, moviesList, isError } = useMovies();
+  const { isLoading, movieList, isError } = useMovies();
 
   return (
     <>
@@ -16,7 +16,7 @@ function MoviesPage() {
       )}
       {!isLoading && !isError && (
         <CardGridContainer>
-          {moviesList?.map((movie) => (
+          {movieList?.map((movie) => (
             <MediaCard key={movie.id} media={movie} />
           ))}
         </CardGridContainer>

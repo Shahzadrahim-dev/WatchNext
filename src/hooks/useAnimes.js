@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function useAnimes() {
+export function useAnimes() {
   const [animes, setAnimes] = useState({});
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,5 +40,3 @@ function useAnimes() {
 
   return { animes, isError, isLoading };
 }
-
-export default useAnimes;

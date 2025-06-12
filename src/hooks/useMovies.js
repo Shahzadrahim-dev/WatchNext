@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-export default function useMovies() {
-  const [moviesList, setMovieList] = useState([]);
+export function useMovies() {
+  const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -23,6 +23,11 @@ export default function useMovies() {
         signal: controller.signal,
       };
 
+      // const res2 = await fetch(
+      //   `https://api.themoviedb.org/3/search/multi?query=gladiator`,
+      //   options,
+      // );
+      // console.log(await res2.json());
       try {
         const res = await fetch(
           "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
@@ -70,5 +75,5 @@ export default function useMovies() {
     };
   }, []);
 
-  return { moviesList, isLoading, isError };
+  return { movieList, isLoading, isError };
 }

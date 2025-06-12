@@ -1,7 +1,7 @@
 import CardGridContainer from "../components/presentational/CardGridContainer";
 import MediaCard from "../components/presentational/MediaCard";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
-import useTVShows from "../hooks/useTVShows";
+import { useTVShows } from "../hooks/useTVShows";
 import Error from "../components/presentational/Error";
 
 function TVShowsPage() {

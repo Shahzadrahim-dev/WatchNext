@@ -1,17 +1,12 @@
-import CardGridContainer from "../components/presentational/CardGridContainer";
 import MediaCard from "../components/presentational/MediaCard";
-import { useAnimes } from "../hooks/useAnimes";
+import CardGridContainer from "../components/presentational/CardGridContainer";
+import { useSearchMedia } from "../hooks/useSearchMedia";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
-import { useLocation } from "react-router-dom";
 
-function AnimesPage() {
-  const { animes, isLoading, isError } = useAnimes();
-
-  const location = useLocation();
-
-  console.log("animelayout");
-  console.log(location);
+function SearchResultPage() {
+  const { searchMedia, isLoading, isError } =
+    useSearchMedia();
 
   return (
     <>
@@ -20,11 +15,15 @@ function AnimesPage() {
           <LoadingAnimation />
         </div>
       )}
-      <CardGridContainer>
-        {animes?.data?.map((anime) => (
-          <MediaCard media={anime} />
-        ))}
-      </CardGridContainer>
+
+      {!isLoading && !isError && (
+        <CardGridContainer>
+          {searchMedia?.map((media) => (
+            <MediaCard key={media.id} media={media} />
+          ))}
+        </CardGridContainer>
+      )}
+
       {isError && (
         <div className="flex h-[65vh] items-center justify-center text-[1.1rem]">
           <Error />
@@ -34,4 +33,4 @@ function AnimesPage() {
   );
 }
 
-export default AnimesPage;
+export default SearchResultPage;

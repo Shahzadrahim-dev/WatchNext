@@ -1,11 +1,11 @@
-import useTrending from "../hooks/useTrending";
+import { useTrending } from "../hooks/useTrending";
 import CardGridContainer from "../components/presentational/CardGridContainer";
 import MediaCard from "../components/presentational/MediaCard";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
 
 function TrendingsPage() {
-  const { trending, isLoading, isError } = useTrending();
+  const { trendings, isLoading, isError } = useTrending();
 
   return (
     <>
@@ -16,8 +16,8 @@ function TrendingsPage() {
       )}
       {!isLoading && !isError && (
         <CardGridContainer>
-          {trending?.map((movie) => (
-            <MediaCard key={movie.id} media={movie} />
+          {trendings?.map((trending) => (
+            <MediaCard key={trending.id} media={trending} />
           ))}
         </CardGridContainer>
       )}
