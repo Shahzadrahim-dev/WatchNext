@@ -12,6 +12,7 @@ import TrendingsPage from "./pages/TrendingsPage";
 import TVShowsPage from "./pages/TVShowsPage";
 import SearchResultPage from "./pages/SearchResultPage";
 import { SearchProvider } from "./contexts/useSearchContext";
+import CardSkeleton from "./components/ui/CardSkeleton";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
               path="search"
               element={<SearchResultPage />}
             />
+            <Route path="test" element={<CardSkeleton />} />
           </Route>
         </Routes>
       </BrowserRouter>

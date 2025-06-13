@@ -21,6 +21,8 @@ export function useSearchMedia() {
   const [searchMedia, setSearchMedia] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
   const { searchInput } = useSearch();
 
   useEffect(() => {
@@ -59,13 +61,15 @@ export function useSearchMedia() {
               fetchDetails(item, options),
             ),
           );
+
           setSearchMedia(detailedFilteredData);
-          // console.log(detailedFilteredData);
+          setHasSearched(true);
         }
       } catch (e) {
         if (e.name !== "AbortError") {
           console.log(e.message);
           setIsError(true);
+          setHasSearched(false);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -76,7 +80,7 @@ export function useSearchMedia() {
 
     const delayDebounce = setTimeout(() => {
       fetchSearchMedia();
-    }, 1500);
+    }, 500);
 
     return () => {
       controller.abort();
@@ -84,5 +88,5 @@ export function useSearchMedia() {
     };
   }, [searchInput]);
 
-  return { searchMedia, isError, isLoading };
+  return { searchMedia, isError, isLoading, hasSearched };
 }

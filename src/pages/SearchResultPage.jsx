@@ -3,17 +3,23 @@ import CardGridContainer from "../components/presentational/CardGridContainer";
 import { useSearchMedia } from "../hooks/useSearchMedia";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
+import CardSkeleton from "../components/ui/CardSkeleton";
 
 function SearchResultPage() {
-  const { searchMedia, isLoading, isError } =
+  const { searchMedia, isLoading, isError, hasSearched } =
     useSearchMedia();
+
+  const showSkeleton =
+    isLoading || (!hasSearched && !isError);
 
   return (
     <>
-      {isLoading && (
-        <div className="flex h-[65vh] items-center justify-center">
-          <LoadingAnimation />
-        </div>
+      {showSkeleton && (
+        <CardGridContainer>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </CardGridContainer>
       )}
 
       {!isLoading && !isError && (
@@ -23,6 +29,15 @@ function SearchResultPage() {
           ))}
         </CardGridContainer>
       )}
+
+      {hasSearched &&
+        !isLoading &&
+        !isError &&
+        searchMedia.length === 0 && (
+          <div className="flex h-[65vh] items-center justify-center text-[1.1rem]">
+            <h2>No results found.</h2>
+          </div>
+        )}
 
       {isError && (
         <div className="flex h-[65vh] items-center justify-center text-[1.1rem]">
@@ -34,3 +49,21 @@ function SearchResultPage() {
 }
 
 export default SearchResultPage;
+
+{
+  /* {isLoading && (
+        <CardGridContainer>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </CardGridContainer>
+      )}
+
+      {!hasSearched && !isError && (
+        <CardGridContainer>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </CardGridContainer>
+      )} */
+}

@@ -4,6 +4,7 @@ import { useAnimes } from "../hooks/useAnimes";
 import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
 import { useLocation } from "react-router-dom";
+import CardSkeleton from "../components/ui/CardSkeleton";
 
 function AnimesPage() {
   const { animes, isLoading, isError } = useAnimes();
@@ -16,9 +17,11 @@ function AnimesPage() {
   return (
     <>
       {isLoading && (
-        <div className="flex h-[65vh] items-center justify-center">
-          <LoadingAnimation />
-        </div>
+        <CardGridContainer>
+          {Array.from({ length: 25 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </CardGridContainer>
       )}
       <CardGridContainer>
         {animes?.data?.map((anime) => (
