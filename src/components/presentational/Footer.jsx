@@ -10,24 +10,7 @@ function Footer() {
     <>
       <footer className="bg-[#17191e] pb-4 pt-4 mt-10">
         <div className="flex justify-between max-w-screen-xl mx-auto px-[2rem]">
-          <div>
-            <div className="mb-2 ml-[-5px]">
-              <Link to="/">
-                <img src={logo} className="h-[5rem]" />
-              </Link>
-            </div>
-
-            <div className="text-left">
-              <p className="mb-1.5">
-                Bookmark Your Next Binge!
-              </p>
-              <p className="text-gray-400">
-                Copyright © 2025 - All rights reserved
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-12 self-end">
+          <div className="flex gap-20 self-end">
             <nav className="flex flex-col">
               <h6 className="text-[1.5rem] font-bold text-gray-400 mb-[.4rem]">
                 Services
@@ -66,6 +49,24 @@ function Footer() {
 
             <nav className="flex flex-col">
               <h6 className="text-[1.5rem] font-bold text-gray-400 mb-[.4rem]">
+                Explore
+              </h6>
+
+              <Link to="/" className="hover:opacity-80">
+                Features
+              </Link>
+              <Link to="/" className="hover:opacity-80">
+                Enterprise
+              </Link>
+              <Link to="/" className="hover:opacity-80">
+                Securty
+              </Link>
+              <Link to="/" className="hover:opacity-80">
+                Pricing
+              </Link>
+            </nav>
+            <nav className="flex flex-col">
+              <h6 className="text-[1.5rem] font-bold text-gray-400 mb-[.4rem]">
                 Legal
               </h6>
 
@@ -81,8 +82,8 @@ function Footer() {
             </nav>
           </div>
 
-          <div className="flex flex-col gap-3 mt-5 self-center mb-[1.5rem]">
-            <h6 className="text-[2rem] text-gray-400 font-bold">
+          <div className="flex flex-col gap-3 mt-5 self-center mb-10 mr-15">
+            <h6 className="text-[2rem] text-gray-400 font-bold text-center">
               Socials
             </h6>
             <div className="flex gap-4">
