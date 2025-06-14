@@ -1,17 +1,26 @@
 import MediaCard from "../components/presentational/MediaCard";
 import CardGridContainer from "../components/presentational/CardGridContainer";
 import { useSearchMedia } from "../hooks/useSearchMedia";
-import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
 import CardSkeleton from "../components/ui/CardSkeleton";
+import { useSearch } from "../contexts/useSearchContext";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function SearchResultPage() {
   const { searchMedia, isLoading, isError, hasSearched } =
     useSearchMedia();
+  const { searchInput } = useSearch();
+  const navigate = useNavigate();
 
   const showSkeleton =
     isLoading || (!hasSearched && !isError);
 
+  useEffect(() => {
+    if (searchInput.trim().length < 3) {
+      navigate("/", { replace: true });
+    }
+  }, [searchInput, navigate]);
   return (
     <>
       {showSkeleton && (
