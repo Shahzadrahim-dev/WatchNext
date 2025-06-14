@@ -7,6 +7,7 @@ import downIcon from "../../assets/down.svg";
 import searchIcon from "../../assets/search.svg";
 import Crown from "../presentational/Crown";
 import { useSearch } from "../../contexts/useSearchContext";
+import { Link } from "react-router-dom";
 
 function Header() {
   const { setSearchInput, searchInput } = useSearch();

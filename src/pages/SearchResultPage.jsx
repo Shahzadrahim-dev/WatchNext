@@ -21,6 +21,7 @@ function SearchResultPage() {
       navigate("/", { replace: true });
     }
   }, [searchInput, navigate]);
+
   return (
     <>
       {showSkeleton && (

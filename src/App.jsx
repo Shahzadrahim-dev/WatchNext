@@ -13,6 +13,7 @@ import TVShowsPage from "./pages/TVShowsPage";
 import SearchResultPage from "./pages/SearchResultPage";
 import { SearchProvider } from "./contexts/useSearchContext";
 import CardSkeleton from "./components/ui/CardSkeleton";
+import SearchReadyRoute from "./components/routes/SearchReadyRoute";
 
 function App() {
   return (
@@ -43,7 +44,11 @@ function App() {
             />
             <Route
               path="search"
-              element={<SearchResultPage />}
+              element={
+                <SearchReadyRoute>
+                  <SearchResultPage />
+                </SearchReadyRoute>
+              }
             />
             <Route path="test" element={<CardSkeleton />} />
           </Route>
