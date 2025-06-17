@@ -4,10 +4,20 @@ const SearchContext = createContext();
 
 function SearchProvider({ children }) {
   const [searchInput, setSearchInput] = useState("");
+  const [fetchHasStarted, setFetchHasStarted] =
+    useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   return (
     <SearchContext.Provider
-      value={{ searchInput, setSearchInput }}
+      value={{
+        searchInput,
+        setSearchInput,
+        hasSearched,
+        setHasSearched,
+        fetchHasStarted,
+        setFetchHasStarted,
+      }}
     >
       {children}
     </SearchContext.Provider>

@@ -5,7 +5,7 @@ import unwatched from "../../assets/unwatched.svg";
 import watched from "../../assets/watched.svg";
 import emptyheart from "../../assets/emptyHeart.svg";
 import filledHeart from "../../assets/filledHeart.svg";
-import sub from "../../assets/wonder.jpg";
+import imageUnavailable from "../../assets/imageunavailable.png";
 
 import { truncateTitle } from "../../utils/truncateTitle";
 const baseUrl = "https://image.tmdb.org/t/p/w300";
@@ -52,7 +52,7 @@ function MediaCard({ media }) {
               ? `url(${baseUrl}${poster_path})`
               : anime_poster
                 ? `url(${anime_poster})`
-                : `url(${sub})`,
+                : `url(${imageUnavailable})`,
           }}
         >
           <div>

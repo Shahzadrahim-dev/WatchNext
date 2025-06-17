@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <>
-      <footer className="bg-[#17191e] pb-4 pt-4 mt-10">
-        <div className="flex justify-between max-w-screen-xl mx-auto px-[2rem]">
+      <footer className="bg-[#17191e] mt-10 py-6">
+        <div className="flex justify-between max-w-screen-xl mx-auto px-[4rem]">
           <div className="flex gap-20 self-end">
             <nav className="flex flex-col">
               <h6 className="text-[1.5rem] font-bold text-gray-400 mb-[.4rem]">
@@ -82,7 +82,7 @@ function Footer() {
             </nav>
           </div>
 
-          <div className="flex flex-col gap-3 mt-5 self-center mb-10 mr-15">
+          <div className="flex flex-col gap-3 self-center mb-7 mr-2">
             <h6 className="text-[2rem] text-gray-400 font-bold text-center">
               Socials
             </h6>

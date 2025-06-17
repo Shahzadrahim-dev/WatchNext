@@ -1,5 +1,4 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 import logo from "../../assets/logo.png";
 import profileIcon from "../../assets/profile-image.jpg";
@@ -24,13 +23,15 @@ function Header() {
     <>
       <header className="flex justify-between mb-[.5rem]">
         <div className="flex gap-6 items-center">
-          <a href="/" className="flex h-[5rem] w-[10rem]">
-            <img
-              src={logo}
-              alt="logo"
-              className="ml-[.4rem] h-[4.3rem] object-cover object-center"
-            />
-          </a>
+          <div href="/" className="flex h-[5rem] w-[10rem]">
+            <Link to="/">
+              <img
+                src={logo}
+                alt="logo"
+                className="ml-[.4rem] h-[4.3rem] object-cover object-center"
+              />
+            </Link>
+          </div>
 
           <div className="flex gap-14 items-center mb-[1rem]">
             <nav>

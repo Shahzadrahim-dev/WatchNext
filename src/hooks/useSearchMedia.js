@@ -18,12 +18,16 @@ async function fetchDetails(item, options) {
 }
 
 export function useSearchMedia() {
-  const [searchMedia, setSearchMedia] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchMedia, setSearchMedia] = useState([]);
   const [isError, setIsError] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  const { searchInput } = useSearch();
+  const {
+    searchInput,
+    hasSearched,
+    setHasSearched,
+    setFetchHasStarted,
+  } = useSearch();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,6 +47,7 @@ export function useSearchMedia() {
 
       try {
         if (searchInput.trim().length >= 3) {
+          setFetchHasStarted(true);
           const res = await fetch(
             `https://api.themoviedb.org/3/search/multi?query=${searchInput}`,
             options,
