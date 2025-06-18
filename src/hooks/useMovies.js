@@ -4,6 +4,7 @@ export function useMovies() {
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [page, setPage] = useState(1);
 
   useEffect(function () {
     const controller = new AbortController();
@@ -23,11 +24,6 @@ export function useMovies() {
         signal: controller.signal,
       };
 
-      // const res2 = await fetch(
-      //   `https://api.themoviedb.org/3/search/multi?query=gladiator`,
-      //   options,
-      // );
-      // console.log(await res2.json());
       try {
         const res = await fetch(
           "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",

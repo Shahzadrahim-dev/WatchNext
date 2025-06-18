@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <>
-      <footer className="bg-[#17191e] mt-10 py-6">
+      <footer className="bg-[#17191e] mt-23 py-6">
         <div className="flex justify-between max-w-screen-xl mx-auto px-[4rem]">
           <div className="flex gap-20 self-end">
             <nav className="flex flex-col">
