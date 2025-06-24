@@ -2,12 +2,12 @@ import ProtectedRoute from "./ProtectedRoute";
 import { useSearch } from "../../contexts/useSearchContext";
 
 function SearchReadyRoute({ children }) {
-  const { searchInput, fetchHasStarted } = useSearch();
+  const { searchInput, hasFetchStarted } = useSearch();
 
   return (
     <ProtectedRoute
       check={() =>
-        searchInput.trim().length < 3 && !fetchHasStarted
+        searchInput.trim().length < 3 && !hasFetchStarted
           ? false
           : true
       }

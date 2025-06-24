@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useMovies() {
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
+  const [isAutoLoad, setIsAutoLoad] = useState(false);
+  const [totalPages, setTotalPages] = useState(null);
 
-  useEffect(function () {
-    const controller = new AbortController();
-
-    async function fetchMovies() {
+  const fetchMovies = useCallback(
+    async (signal) => {
       const token = import.meta.env.VITE_TMDB_API_TOKEN;
 
       setIsLoading(true);
@@ -21,12 +21,12 @@ export function useMovies() {
           accept: "application/json",
           authorization: `Bearer ${token}`,
         },
-        signal: controller.signal,
+        signal,
       };
 
       try {
         const res = await fetch(
-          "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
+          `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
           options,
         );
 
@@ -35,6 +35,7 @@ export function useMovies() {
 
         const data = await res.json();
 
+        setTotalPages(data.total_pages);
         const detailedMovies = await Promise.all(
           data.results.map(async (movie) => {
             try {
@@ -52,24 +53,45 @@ export function useMovies() {
           }),
         );
 
-        setMovieList(detailedMovies.filter(Boolean));
+        setMovieList((prev) => [
+          ...prev,
+          ...detailedMovies.filter(Boolean),
+        ]);
       } catch (e) {
         if (e.name !== "AbortError") {
           console.log(e.message);
           setIsError(true);
         }
       } finally {
-        if (!controller.signal.aborted) {
+        if (!signal.aborted) {
           setIsLoading(false);
         }
       }
-    }
+    },
+    [page],
+  );
 
-    fetchMovies();
-    return () => {
-      controller.abort();
-    };
-  }, []);
+  useEffect(
+    function () {
+      const controller = new AbortController();
+      fetchMovies(controller.signal);
+      return () => {
+        controller.abort();
+      };
+    },
+    [fetchMovies],
+  );
 
-  return { movieList, isLoading, isError };
+  const loadNextMoviePage = () => setPage((p) => p + 1);
+
+  return {
+    movieList,
+    isLoading,
+    isError,
+    loadNextMoviePage,
+    isAutoLoad,
+    setIsAutoLoad,
+    totalPages,
+    page,
+  };
 }

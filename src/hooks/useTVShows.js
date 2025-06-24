@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useTVShows() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [tvShows, setTVShows] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(false);
+  const [isAutoLoad, setIsAutoLoad] = useState(false);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchTVShows() {
+  const fetchTVShows = useCallback(
+    async function (signal) {
       const token = import.meta.env.VITE_TMDB_API_TOKEN;
 
       setIsLoading(true);
@@ -20,12 +21,12 @@ export function useTVShows() {
           accept: "application/json",
           authorization: `Bearer ${token}`,
         },
-        signal: controller.signal,
+        signal: signal,
       };
 
       try {
         const res = await fetch(
-          "https://api.themoviedb.org/3/tv/popular?language=en-US&page=1",
+          `https://api.themoviedb.org/3/tv/popular?language=en-US&page=${page}`,
           options,
         );
 
@@ -33,6 +34,7 @@ export function useTVShows() {
           throw new Error("There was an error fetching");
 
         const data = await res.json();
+        setTotalPages(data.total_pages);
 
         const detailedData = await Promise.all(
           data.results.map(async (item) => {
@@ -53,23 +55,44 @@ export function useTVShows() {
           }),
         );
 
-        setTVShows(detailedData.filter(Boolean));
+        setTVShows((prev) => [
+          ...prev,
+          ...detailedData.filter(Boolean),
+        ]);
       } catch (e) {
         if (e.name !== "AbortError") {
           setIsError(true);
           console.log(e.message);
         }
       } finally {
-        if (!controller.signal.aborted) {
+        if (!signal.aborted) {
           setIsLoading(false);
         }
       }
-    }
+    },
+    [page],
+  );
 
-    fetchTVShows();
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchTVShows(controller.signal);
 
     return () => controller.abort();
-  }, []);
+  }, [fetchTVShows]);
 
-  return { tvShows, isLoading, isError };
+  function loadNextTVShowPage() {
+    setPage((p) => p + 1);
+  }
+
+  return {
+    tvShows,
+    isLoading,
+    isError,
+    loadNextTVShowPage,
+    isAutoLoad,
+    setIsAutoLoad,
+    totalPages,
+    page,
+  };
 }

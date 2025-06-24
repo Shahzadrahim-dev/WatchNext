@@ -3,33 +3,49 @@ import CardGridContainer from "../components/presentational/CardGridContainer";
 import { useSearchMedia } from "../hooks/useSearchMedia";
 import Error from "../components/presentational/Error";
 import CardSkeleton from "../components/ui/CardSkeleton";
+import { useSearch } from "../contexts/useSearchContext";
 
 function SearchResultPage() {
-  const { searchMedia, isLoading, isError, hasSearched } =
-    useSearchMedia();
+  const {
+    searchMedia,
+    isLoading,
+    isError,
+    getSearchMediaNextPage,
+    isAutoLoad,
+    setIsAutoLoad,
+    totalPages,
+    page,
+  } = useSearchMedia();
+  const { hasSearched, searchInput } = useSearch();
 
   const showSkeleton =
-    isLoading || (!hasSearched && !isError);
+    isLoading ||
+    (!hasSearched &&
+      !isError &&
+      searchInput.trim().length >= 3);
 
   return (
     <>
-      {showSkeleton && (
-        <CardGridContainer>
-          {Array.from({ length: 20 }).map((_, i) => (
+      <CardGridContainer
+        onLoadMore={getSearchMediaNextPage}
+        isLoading={isLoading}
+        isError={isError}
+        hasData={searchMedia?.length > 0}
+        isAutoLoad={isAutoLoad}
+        setIsAutoLoad={setIsAutoLoad}
+        isPageLimitExceeded={page === totalPages}
+        isSearchValid={searchInput.trim().length >= 3}
+      >
+        {searchMedia?.map((media) => (
+          <MediaCard key={media.id} media={media} />
+        ))}
+        {showSkeleton &&
+          Array.from({ length: 20 }).map((_, i) => (
             <CardSkeleton key={i} />
           ))}
-        </CardGridContainer>
-      )}
+      </CardGridContainer>
 
-      {!isLoading && !isError && (
-        <CardGridContainer>
-          {searchMedia?.map((media) => (
-            <MediaCard key={media.id} media={media} />
-          ))}
-        </CardGridContainer>
-      )}
-
-      {hasSearched &&
+      {!showSkeleton &&
         !isLoading &&
         !isError &&
         searchMedia.length === 0 && (
@@ -48,21 +64,3 @@ function SearchResultPage() {
 }
 
 export default SearchResultPage;
-
-{
-  /* {isLoading && (
-        <CardGridContainer>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <CardSkeleton key={i} />
-          ))}
-        </CardGridContainer>
-      )}
-
-      {!hasSearched && !isError && (
-        <CardGridContainer>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <CardSkeleton key={i} />
-          ))}
-        </CardGridContainer>
-      )} */
-}

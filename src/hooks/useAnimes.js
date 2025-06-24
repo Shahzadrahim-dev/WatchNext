@@ -1,42 +1,61 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useAnimes() {
-  const [animes, setAnimes] = useState({});
+  const [animes, setAnimes] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(false);
+  const [isAutoLoad, setIsAutoLoad] = useState(false);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchAnime() {
+  const fetchAnime = useCallback(
+    async function (signal) {
       setIsLoading(true);
       setIsError(false);
 
       try {
         const res = await fetch(
-          `https://api.jikan.moe/v4/top/anime`,
-          { signal: controller.signal },
+          `https://api.jikan.moe/v4/top/anime?page=${page}`,
+          { signal: signal },
         );
 
         if (!res.ok) throw new Error("unable to fetch");
         const dataObj = await res.json();
 
-        setAnimes(dataObj);
+        setTotalPages(dataObj.pagination.last_visible_page);
+
+        setAnimes((prev) => [...prev, ...dataObj.data]);
       } catch (e) {
         if (e.name !== "AbortError") {
           console.log(e.message);
           setIsError(true);
         }
       } finally {
-        if (!controller.signal.aborted) {
+        if (!signal.aborted) {
           setIsLoading(false);
         }
       }
-    }
+    },
+    [page],
+  );
 
-    fetchAnime();
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchAnime(controller.signal);
     return () => controller.abort();
-  }, []);
+  }, [fetchAnime]);
 
-  return { animes, isError, isLoading };
+  const loadNextAnimePage = () => setPage((p) => p + 1);
+
+  return {
+    animes,
+    isError,
+    isLoading,
+    loadNextAnimePage,
+    isAutoLoad,
+    setIsAutoLoad,
+    page,
+    totalPages,
+  };
 }

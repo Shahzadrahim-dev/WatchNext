@@ -1,33 +1,41 @@
 import CardGridContainer from "../components/presentational/CardGridContainer";
 import MediaCard from "../components/presentational/MediaCard";
 import { useAnimes } from "../hooks/useAnimes";
-import LoadingAnimation from "../components/presentational/LoadingAnimation";
 import Error from "../components/presentational/Error";
-import { useLocation } from "react-router-dom";
 import CardSkeleton from "../components/ui/CardSkeleton";
 
 function AnimesPage() {
-  const { animes, isLoading, isError } = useAnimes();
-
-  const location = useLocation();
-
-  console.log("animelayout");
-  console.log(location);
+  const {
+    animes,
+    isLoading,
+    isError,
+    loadNextAnimePage,
+    isAutoLoad,
+    setIsAutoLoad,
+    page,
+    totalPages,
+  } = useAnimes();
 
   return (
     <>
-      {isLoading && (
-        <CardGridContainer>
-          {Array.from({ length: 25 }).map((_, i) => (
-            <CardSkeleton key={i} />
-          ))}
-        </CardGridContainer>
-      )}
-      <CardGridContainer>
-        {animes?.data?.map((anime) => (
+      <CardGridContainer
+        hasData={animes?.length > 0}
+        isLoading={isLoading}
+        isError={isError}
+        onLoadMore={loadNextAnimePage}
+        isAutoLoad={isAutoLoad}
+        setIsAutoLoad={setIsAutoLoad}
+        isPageLimitExceeded={page === totalPages}
+      >
+        {animes?.map((anime) => (
           <MediaCard media={anime} />
         ))}
+        {isLoading &&
+          Array.from({ length: 25 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
       </CardGridContainer>
+
       {isError && (
         <div className="flex h-[65vh] items-center justify-center text-[1.1rem]">
           <Error />

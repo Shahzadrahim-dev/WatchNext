@@ -4,11 +4,12 @@ import youtube from "../../assets/youtube.svg";
 import instagram from "../../assets/instagram.svg";
 import twitter from "../../assets/twitter.svg";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 function Footer() {
   return (
     <>
-      <footer className="bg-[#17191e] mt-23 py-6">
+      <footer className="bg-[#17191e] mt-5 py-6">
         <div className="flex justify-between max-w-screen-xl mx-auto px-[4rem]">
           <div className="flex gap-20 self-end">
             <nav className="flex flex-col">
