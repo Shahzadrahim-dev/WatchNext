@@ -5,6 +5,12 @@ import Header from "./Header";
 import { useSearch } from "../../contexts/useSearchContext";
 import { useRouteChange } from "../../hooks/useRouteChange";
 import Footer from "../presentational/Footer";
+import { AppSidebar } from "../presentational/AppSidebar";
+
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 function MainLayout() {
   const { setSearchInput } = useSearch();
@@ -17,10 +23,13 @@ to run on each render */
 
   return (
     <>
-      <Container>
-        <Header />
-        <Outlet />
-      </Container>
+      <SidebarProvider>
+        <AppSidebar />
+        <Container>
+          <Header />
+          <Outlet />
+        </Container>
+      </SidebarProvider>
       <Footer />
     </>
   );

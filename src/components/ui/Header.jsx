@@ -7,11 +7,14 @@ import searchIcon from "../../assets/search.svg";
 import Crown from "../presentational/Crown";
 import { useSearch } from "../../contexts/useSearchContext";
 import { Link } from "react-router-dom";
+import BubbleHamburger from "../ui/BubbleHamburger";
+import { useSidebar } from "./Sidebar";
 
 function Header() {
   const { setSearchInput, searchInput } = useSearch();
 
   const navigate = useNavigate();
+  const { toggleSidebar } = useSidebar();
 
   function handleChange() {
     if (searchInput.length >= 2) {
@@ -22,6 +25,10 @@ function Header() {
   return (
     <>
       <header className="flex justify-between mb-[.5rem]">
+        <BubbleHamburger
+          className="absolute"
+          toggleSidebar={toggleSidebar}
+        />
         <div className="flex gap-6 items-center">
           <div href="/" className="flex h-[5rem] w-[10rem]">
             <Link to="/">
