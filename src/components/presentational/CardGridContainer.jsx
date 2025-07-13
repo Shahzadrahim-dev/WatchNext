@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { useGenres } from "../../contexts/useGenresContext";
+import { cn } from "../../lib/utils";
 
 function CardGridContainer({
   children,
@@ -11,7 +13,11 @@ function CardGridContainer({
   setIsAutoLoad,
   isPageLimitExceeded,
   isSearchValid = true,
+  isMediaStatus = false,
+  jaikan = false,
+  margin = false,
 }) {
+  const { isTopRatedOn, genre, jaikanGenre } = useGenres();
   const sentinelRef = useRef();
 
   useEffect(() => {
@@ -26,7 +32,6 @@ function CardGridContainer({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          console.log("intersected");
           onLoadMore();
         }
       },
@@ -44,7 +49,16 @@ function CardGridContainer({
   ]);
 
   return (
-    <div>
+    <div
+      className={cn(
+        isMediaStatus ||
+          margin ||
+          (!jaikan && !genre && !isTopRatedOn) ||
+          (jaikan && !jaikanGenre && !isTopRatedOn)
+          ? "mt-[1rem]"
+          : "mt-[.2rem]",
+      )}
+    >
       <ul
         className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))]
           justify-items-center gap-y-6 relative pb-5"
@@ -56,7 +70,8 @@ function CardGridContainer({
         {!isError &&
           hasData &&
           !isAutoLoad &&
-          isSearchValid && (
+          isSearchValid &&
+          !isMediaStatus && (
             <Button
               variant="secondary"
               className="w-30 h-10"

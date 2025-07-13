@@ -10,8 +10,6 @@ export function useIsMobile() {
       `(max-width: ${MOBILE_BREAKPOINT - 1}px)`,
     );
 
-    console.log(mql);
-
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };

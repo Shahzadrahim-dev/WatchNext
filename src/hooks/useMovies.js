@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useGenres } from "../contexts/useGenresContext";
 
 export function useMovies() {
   const [movieList, setMovieList] = useState([]);
@@ -7,6 +8,18 @@ export function useMovies() {
   const [page, setPage] = useState(1);
   const [isAutoLoad, setIsAutoLoad] = useState(false);
   const [totalPages, setTotalPages] = useState(null);
+  const { isTopRatedOn, genre } = useGenres();
+  let topRatedFilter = null;
+  let topRatedPlusGenre = null;
+
+  if (isTopRatedOn) {
+    topRatedFilter = "top_rated";
+    topRatedPlusGenre =
+      "&sort_by=vote_average.desc&vote_count.gte=1000";
+  } else {
+    topRatedFilter = "popular";
+    topRatedPlusGenre = "";
+  }
 
   const fetchMovies = useCallback(
     async (signal) => {
@@ -25,10 +38,18 @@ export function useMovies() {
       };
 
       try {
-        const res = await fetch(
-          `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`,
-          options,
-        );
+        let res = null;
+        if (genre) {
+          res = await fetch(
+            `https://api.themoviedb.org/3/discover/movie?with_genres=${genre.id}&page=${page}&language=en-US${topRatedPlusGenre}`,
+            options,
+          );
+        } else {
+          res = await fetch(
+            `https://api.themoviedb.org/3/movie/${topRatedFilter}?language=en-US&page=${page}`,
+            options,
+          );
+        }
 
         if (!res.ok)
           throw new Error("There was an error fetching");
@@ -68,7 +89,7 @@ export function useMovies() {
         }
       }
     },
-    [page],
+    [genre, page, topRatedPlusGenre, topRatedFilter],
   );
 
   useEffect(
@@ -81,6 +102,11 @@ export function useMovies() {
     },
     [fetchMovies],
   );
+
+  useEffect(() => {
+    setMovieList([]);
+    setPage(1);
+  }, [isTopRatedOn, genre]);
 
   const loadNextMoviePage = () => setPage((p) => p + 1);
 

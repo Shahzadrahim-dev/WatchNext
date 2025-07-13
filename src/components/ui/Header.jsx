@@ -8,7 +8,7 @@ import Crown from "../presentational/Crown";
 import { useSearch } from "../../contexts/useSearchContext";
 import { Link } from "react-router-dom";
 import BubbleHamburger from "../ui/BubbleHamburger";
-import { useSidebar } from "./Sidebar";
+import { useSidebar } from "./sidebar";
 
 function Header() {
   const { setSearchInput, searchInput } = useSearch();
@@ -24,20 +24,18 @@ function Header() {
 
   return (
     <>
-      <header className="flex justify-between mb-[.5rem]">
+      <header className="flex justify-between">
         <BubbleHamburger
           className="absolute"
           toggleSidebar={toggleSidebar}
         />
         <div className="flex gap-6 items-center">
-          <div href="/" className="flex h-[5rem] w-[10rem]">
-            <Link to="/">
-              <img
-                src={logo}
-                alt="logo"
-                className="ml-[.4rem] h-[4.3rem] object-cover object-center"
-              />
-            </Link>
+          <div href="/" className="flex w-[10rem]">
+            <img
+              src={logo}
+              alt="logo"
+              className="ml-[.4rem] h-[4.3rem] object-cover object-center"
+            />
           </div>
 
           <div className="flex gap-14 items-center mb-[1rem]">

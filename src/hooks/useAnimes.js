@@ -1,12 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
+import { useGenres } from "../contexts/useGenresContext";
 
 export function useAnimes() {
   const [animes, setAnimes] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(false);
+  const [totalPages, setTotalPages] = useState(null);
   const [isAutoLoad, setIsAutoLoad] = useState(false);
+  const { isTopRatedOn, jaikanGenre } = useGenres();
+  let topRatedFilter = null;
+  let topRatedPlusGenre = null;
+
+  if (isTopRatedOn) {
+    topRatedFilter = ""; // by default this api returns top rated
+    topRatedPlusGenre = "order_by=score&sort=desc";
+  } else {
+    topRatedPlusGenre = "";
+    topRatedFilter = "filter=bypopularity&"; // by applying this we get popular anime's list, which is what we want as default
+  }
 
   const fetchAnime = useCallback(
     async function (signal) {
@@ -14,10 +26,19 @@ export function useAnimes() {
       setIsError(false);
 
       try {
-        const res = await fetch(
-          `https://api.jikan.moe/v4/top/anime?page=${page}`,
-          { signal: signal },
-        );
+        let res = null;
+
+        if (jaikanGenre) {
+          res = await fetch(
+            ` https://api.jikan.moe/v4/anime?genres=${jaikanGenre.mal_id}&${topRatedPlusGenre}&page=${page}`,
+            { signal: signal },
+          );
+        } else {
+          res = await fetch(
+            `https://api.jikan.moe/v4/top/anime?${topRatedFilter}page=${page}`,
+            { signal: signal },
+          );
+        }
 
         if (!res.ok) throw new Error("unable to fetch");
         const dataObj = await res.json();
@@ -36,12 +57,17 @@ export function useAnimes() {
         }
       }
     },
-    [page],
+
+    [jaikanGenre, page, topRatedFilter, topRatedPlusGenre],
   );
 
   useEffect(() => {
-    const controller = new AbortController();
+    setAnimes([]);
+    setPage(1);
+  }, [isTopRatedOn, jaikanGenre]);
 
+  useEffect(() => {
+    const controller = new AbortController();
     fetchAnime(controller.signal);
     return () => controller.abort();
   }, [fetchAnime]);

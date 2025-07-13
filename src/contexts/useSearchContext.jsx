@@ -7,6 +7,7 @@ function SearchProvider({ children }) {
   const [hasSearched, setHasSearched] = useState(false);
   const [hasFetchStarted, setHasFetchStarted] =
     useState(false);
+
   return (
     <SearchContext.Provider
       value={{

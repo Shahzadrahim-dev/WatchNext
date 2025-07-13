@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useGenres } from "../contexts/useGenresContext";
 
 async function fetchDetails(item, options) {
   try {
@@ -22,6 +23,7 @@ export function useTrending() {
   const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
   const [isAutoLoad, setIsAutoLoad] = useState(false);
+  const { isTopRatedOn } = useGenres();
 
   const fetchTrendings = useCallback(
     async function (signal) {
@@ -61,9 +63,25 @@ export function useTrending() {
           ),
         );
 
+        let sorted = [];
+        if (isTopRatedOn) {
+          // sort by top rated
+          sorted = [...detailedFilteredData].sort(
+            (a, b) => {
+              const ratingA =
+                a.vote_average || a.score || 0;
+              const ratingB =
+                b.vote_average || b.score || 0;
+              return ratingB - ratingA; // highest rating first
+            },
+          );
+        } else {
+          sorted = detailedFilteredData;
+        }
+
         setTrendings((prev) => [
           ...prev,
-          ...detailedFilteredData.filter(Boolean),
+          ...sorted.filter(Boolean),
         ]);
       } catch (e) {
         if (e.name !== "AbortError") {
@@ -76,11 +94,18 @@ export function useTrending() {
         }
       }
     },
-    [page],
+    [isTopRatedOn, page],
   );
+
+  useEffect(() => {
+    console.log("second effect");
+    setTrendings([]);
+    setPage(1);
+  }, [isTopRatedOn]);
 
   useEffect(
     function () {
+      console.log("first effect");
       const controller = new AbortController();
 
       fetchTrendings(controller.signal);

@@ -1,18 +1,78 @@
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import PlayIcon from "./PlayIcon";
-import unwatched from "../../assets/unwatched.svg";
-import watched from "../../assets/watched.svg";
+import unwatchedImg from "../../assets/unwatched.svg";
+import watchedImg from "../../assets/watched.svg";
 import emptyheart from "../../assets/emptyHeart.svg";
 import filledHeart from "../../assets/filledHeart.svg";
 import imageUnavailable from "../../assets/imageunavailable.png";
-
+import { cn } from "../../lib/utils";
 import { truncateTitle } from "../../utils/truncateTitle";
+import { useMediaStatus } from "../../contexts/useMediaStateContext";
 const baseUrl = "https://image.tmdb.org/t/p/w300";
+import { useNavigate } from "react-router-dom";
+import { useRecents } from "../../contexts/useRecentContext";
 
-function MediaCard({ media }) {
-  const [isWatched, setIsWatched] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(false);
+function MediaCard({
+  media,
+  setFilteredMedia,
+  mediaStatusType = null,
+}) {
+  const navigate = useNavigate();
+
+  // this checks whether the media is Anime
+  const mediaId = media.id ?? media.mal_id;
+  const isAnime = !!media.mal_id;
+
+  // this checks whether the media a tv show
+  const isTVShow = media?.number_of_seasons ? true : false;
+
+  const { mediaState, setMediaState } = useMediaStatus();
+  const { addToRecents } = useRecents();
+
+  const [isWatched, setIsWatched] = useState(() => {
+    const stored = JSON.parse(
+      localStorage.getItem("mediaStatus"),
+    );
+    return stored?.[mediaId]?.isWatched ?? false;
+  });
+  const [isFavorited, setIsFavorited] = useState(() => {
+    const stored = JSON.parse(
+      localStorage.getItem("mediaStatus"),
+    );
+
+    return stored?.[mediaId]?.isFavorited ?? false;
+  });
+  const [isWatchlisted, setIsWatchlisted] = useState(() => {
+    const stored = JSON.parse(
+      localStorage.getItem("mediaStatus"),
+    );
+
+    return stored?.[mediaId]?.isWatchlisted ?? false;
+  });
+
+  useEffect(() => {
+    setMediaState((prev) => {
+      return {
+        ...prev,
+        [mediaId]: {
+          isWatched,
+          isFavorited,
+          isWatchlisted,
+          isAnime,
+          isTVShow,
+        },
+      };
+    });
+  }, [
+    isWatched,
+    isFavorited,
+    mediaId,
+    setMediaState,
+    isWatchlisted,
+    isAnime,
+    isTVShow,
+  ]);
 
   // generally related
   const rawTitle =
@@ -41,9 +101,37 @@ function MediaCard({ media }) {
 
   const title = truncateTitle(rawTitle);
 
+  let favorites = null;
+  let watched = null;
+  let watchlisted = null;
+
+  if (mediaStatusType === "favorites") {
+    favorites = true;
+    watched = null;
+    watchlisted = null;
+  } else if (mediaStatusType === "watched") {
+    favorites = null;
+    watched = true;
+    watchlisted = null;
+  } else if (mediaStatusType === "watchlisted") {
+    favorites = null;
+    watched = null;
+    watchlisted = true;
+  } else if (mediaStatusType === null) {
+    favorites = true;
+    watched = true;
+    watchlisted = true;
+  }
+
   return (
     <li>
-      <a className="group block cursor-pointer">
+      <div
+        className="group block cursor-pointer overflow-hidden"
+        onClick={() => {
+          addToRecents(media);
+          navigate(`/${mediaId}`);
+        }}
+      >
         <div
           className={`relative h-[200px] w-[136px] overflow-hidden rounded-[5px]
             bg-cover bg-center`}
@@ -65,37 +153,155 @@ function MediaCard({ media }) {
                 {Number.isNaN(rating) ? "n/a" : rating}
               </span>
             </div>
-            <img
-              src={isWatched ? watched : unwatched}
-              className="h-5 absolute bottom-1 right-1 z-1 hover:opacity-80"
-              onClick={() =>
-                setIsWatched((isWatched) => !isWatched)
-              }
-            />
-            <img
-              src={isFavorited ? filledHeart : emptyheart}
-              className="h-5 absolute bottom-1 left-1 z-1 hover:opacity-80"
-              onClick={() =>
-                setIsFavorited(
-                  (isFavorited) => !isFavorited,
-                )
-              }
-            />
+            {watched && (
+              <img
+                src={isWatched ? watchedImg : unwatchedImg}
+                className="h-5 absolute bottom-1 right-1 z-2 hover:opacity-80"
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  setIsWatched((prev) => !prev);
+
+                  // this is for react state
+                  if (setFilteredMedia) {
+                    setFilteredMedia((prev) =>
+                      prev.filter(
+                        (item) =>
+                          item.id !== mediaId &&
+                          item.mal_id !== mediaId,
+                      ),
+                    );
+                  }
+
+                  // this is for localStorage
+                  setMediaState((prev) => {
+                    return {
+                      ...prev,
+                      [mediaId]: {
+                        isWatched:
+                          !prev[mediaId]?.isWatched,
+                        isFavorited,
+                        isWatchlisted,
+                        isAnime,
+                        isTVShow,
+                      },
+                    };
+                  });
+                }}
+              />
+            )}
+            {favorites && (
+              <img
+                src={isFavorited ? filledHeart : emptyheart}
+                className="h-5 absolute bottom-1 left-1 z-2 hover:opacity-80"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFavorited((prev) => !prev);
+
+                  if (setFilteredMedia) {
+                    setFilteredMedia((prev) =>
+                      prev.filter(
+                        (item) =>
+                          item.id !== mediaId &&
+                          item.mal_id !== mediaId,
+                      ),
+                    );
+                  }
+
+                  setMediaState((prev) => {
+                    return {
+                      ...prev,
+                      [mediaId]: {
+                        isWatched,
+                        isFavorited:
+                          !prev[mediaId]?.isFavorited,
+                        isWatchlisted,
+                        isAnime,
+                        isTVShow,
+                      },
+                    };
+                  });
+                }}
+              />
+            )}
+            {watchlisted && (
+              <Plus
+                color="#f9fafc"
+                size={20}
+                className={cn(
+                  `absolute top-1 left-1 z-2 hover:opacity-80 rounded-[5px]
+                  py-[1px]`,
+                  isWatchlisted
+                    ? "bg-[#a90003]"
+                    : "bg-[#000]",
+                )}
+                strokeWidth={3}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsWatchlisted((prev) => !prev);
+
+                  if (setFilteredMedia) {
+                    setFilteredMedia((prev) =>
+                      prev.filter(
+                        (item) =>
+                          item.id !== mediaId &&
+                          item.mal_id !== mediaId,
+                      ),
+                    );
+                  }
+
+                  setMediaState((prev) => {
+                    return {
+                      ...prev,
+                      [mediaId]: {
+                        isWatched,
+                        isFavorited,
+                        isWatchlisted:
+                          !prev[mediaId]?.isWatchlisted,
+                        isAnime,
+                        isTVShow,
+                      },
+                    };
+                  });
+                }}
+              />
+            )}
           </div>
 
           {/* Overlay */}
           <div
-            className="absolute inset-0 flex items-center justify-center
-              bg-black/50 opacity-0 transition-opacity duration-380
-              group-hover:opacity-100"
+            className={cn(
+              "absolute inset-0 flex items-center justify-center",
+              "opacity-0 transition-opacity duration-380",
+              "group-hover:opacity-100",
+              !isWatched && "z-[1]",
+            )}
           >
             <PlayIcon height="64px" width="64px" />
           </div>
+
+          {!isWatched && (
+            <div
+              className={cn(
+                "absolute inset-0 flex items-center justify-center",
+                "bg-black/50",
+                "opacity-0 transition-opacity duration-380",
+                "group-hover:opacity-100",
+              )}
+            />
+          )}
+
           <div
             className="absolute inset-0 flex items-center justify-center
-              bg-black/50 opacity-0 transition-opacity duration-380
-              group-hover:opacity-100"
-            style={{ opacity: isWatched ? "100" : "0" }}
+              bg-black/50 opacity-0 transition-opacity duration-380"
+            style={{
+              opacity:
+                (isWatched &&
+                  mediaStatusType === "watched") ||
+                (isWatched && mediaStatusType === null)
+                  ? "100"
+                  : "0",
+            }}
           />
         </div>
 
@@ -130,7 +336,7 @@ function MediaCard({ media }) {
             </span>
           </div>
         </div>
-      </a>
+      </div>
     </li>
   );
 }

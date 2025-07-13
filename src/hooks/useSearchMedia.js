@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSearch } from "../contexts/useSearchContext";
+import { useGenres } from "../contexts/useGenresContext";
 
 async function fetchDetails(item, options, mediaType) {
   try {
@@ -21,6 +22,8 @@ export function useSearchMedia() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
   const [isAutoLoad, setIsAutoLoad] = useState(false);
+
+  const { isTopRatedOn } = useGenres();
 
   const {
     searchInput,
@@ -87,16 +90,19 @@ export function useSearchMedia() {
             })) || []),
           ];
 
-          // sort by popularity or release date
-          combinedResults.sort((a, b) => {
-            const dateA = new Date(
-              a.release_date || a.first_air_date || 0,
-            );
-            const dateB = new Date(
-              b.release_date || b.first_air_date || 0,
-            );
-            return dateB - dateA;
-          });
+          let sorted = [];
+          if (isTopRatedOn) {
+            // sort by top rated
+            sorted = [...combinedResults].sort((a, b) => {
+              const ratingA =
+                a.vote_average || a.score || 0;
+              const ratingB =
+                b.vote_average || b.score || 0;
+              return ratingB - ratingA; // highest rating first
+            });
+          } else {
+            sorted = combinedResults;
+          }
 
           setTotalPages(
             Math.max(
@@ -106,7 +112,7 @@ export function useSearchMedia() {
           );
 
           const detailedResults = await Promise.all(
-            combinedResults.map((item) =>
+            sorted.map((item) =>
               fetchDetails(item, options, item.media_type),
             ),
           );
@@ -139,7 +145,12 @@ export function useSearchMedia() {
         }
       }
     },
-    [searchInput, setHasSearched, setHasFetchStarted],
+    [
+      searchInput,
+      setHasFetchStarted,
+      isTopRatedOn,
+      setHasSearched,
+    ],
   );
 
   useEffect(() => {

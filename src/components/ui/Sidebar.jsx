@@ -27,7 +27,7 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "12rem";
+const SIDEBAR_WIDTH = "14.5rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "d";
@@ -156,7 +156,6 @@ function SidebarProvider({
 
 function Sidebar({
   side = "left",
-  variant = "sidebar",
   collapsible = "offcanvas",
   className,
   children,
@@ -164,7 +163,6 @@ function Sidebar({
 }) {
   const {
     isMobile,
-    state,
     openMobile,
     setOpenMobile,
     open,
@@ -378,7 +376,7 @@ function SidebarContent({ className, ...props }) {
       data-sidebar="content"
       className={cn(
         `flex min-h-0 flex-1 flex-col gap-2 overflow-auto
-        group-data-[collapsible=icon]:overflow-hidden`,
+        group-data-[collapsible=icon]:overflow-hidden bg-[#f9fafc]`,
         className,
       )}
       {...props}
@@ -459,10 +457,7 @@ function SidebarGroupContent({ className, ...props }) {
     <div
       data-slot="sidebar-group-content"
       data-sidebar="group-content"
-      className={cn(
-        "w-full text-sm bg-blue-500",
-        className,
-      )}
+      className={cn("w-full text-sm ", className)}
       {...props}
     />
   );
@@ -487,10 +482,7 @@ function SidebarMenuItem({ className, ...props }) {
     <li
       data-slot="sidebar-menu-item"
       data-sidebar="menu-item"
-      className={cn(
-        "group/menu-item relative bg-yellow-500",
-        className,
-      )}
+      className={cn("group/menu-item relative ", className)}
       {...props}
     />
   );
@@ -540,7 +532,7 @@ function SidebarMenuButton({
       className={cn(
         sidebarMenuButtonVariants({ variant, size }),
         className,
-        "bg-red-500",
+        "",
       )}
       {...props}
     />
@@ -672,8 +664,8 @@ function SidebarMenuSub({ className, ...props }) {
       data-slot="sidebar-menu-sub"
       data-sidebar="menu-sub"
       className={cn(
-        `border-sidebar-border mx-3.5 flex min-w-0 translate-x-px
-        flex-col gap-1 border-l px-2.5 py-0.5`,
+        `border-sidebar-border ml-3.5 mr-1 flex min-w-0
+        translate-x-px flex-col gap-1 border-l px-0 py-0.5`,
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
@@ -688,7 +680,7 @@ function SidebarMenuSubItem({ className, ...props }) {
       data-slot="sidebar-menu-sub-item"
       data-sidebar="menu-sub-item"
       className={cn(
-        "group/menu-sub-item relative",
+        "group/menu-sub-item relative px-0",
         className,
       )}
       {...props}
@@ -760,63 +752,3 @@ export {
   SidebarTrigger,
   useSidebar,
 };
-
-// <div
-//   className="group peer text-sidebar-foreground hidden md:block"
-//   data-state={state}
-//   data-collapsible={
-//     state === "collapsed" ? collapsible : ""
-//   }
-//   data-variant={variant}
-//   data-side={side}
-//   data-slot="sidebar"
-// >
-//   {/* This is what handles the sidebar gap on desktop */}
-//   <div
-//     data-slot="sidebar-gap"
-//     className={cn(
-//       `relative w-(--sidebar-width) bg-transparent
-//       transition-[width] duration-200 ease-linear`,
-//       "group-data-[collapsible=offcanvas]:w-0",
-//       "group-data-[side=right]:rotate-180",
-//       variant === "floating" || variant === "inset"
-//         ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
-//         : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
-//     )}
-//   />
-//   <div
-//     data-slot="sidebar-container"
-//     className={cn(
-//       `fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width)
-//       transition-[left,right,width] duration-200 ease-linear
-//       md:flex`,
-//       side === "left"
-//         ? `left-0
-//           group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]`
-//         : `right-0
-//           group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]`,
-//       // Adjust the padding for floating and inset variants.
-//       variant === "floating" || variant === "inset"
-//         ? `p-2
-//           group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]`
-//         : `group-data-[collapsible=icon]:w-(--sidebar-width-icon)
-//           group-data-[side=left]:border-r
-//           group-data-[side=right]:border-l`,
-//       className,
-//     )}
-//     {...props}
-//   >
-//     <div
-//       data-sidebar="sidebar"
-//       data-slot="sidebar-inner"
-//       className="bg-sidebar
-//         group-data-[variant=floating]:border-sidebar-border flex
-//         h-full w-full flex-col
-//         group-data-[variant=floating]:rounded-lg
-//         group-data-[variant=floating]:border
-//         group-data-[variant=floating]:shadow-sm"
-//     >
-//       {children}
-//     </div>
-//   </div>
-// </div>

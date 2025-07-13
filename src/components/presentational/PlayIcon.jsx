@@ -1,8 +1,13 @@
-function PlayIcon({ height = "64px", width = "64px" }) {
+function PlayIcon({
+  height = "64px",
+  width = "64px",
+  className,
+}) {
   return (
     <svg
       width={height}
       height={width}
+      className={className}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
