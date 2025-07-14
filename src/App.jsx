@@ -20,7 +20,7 @@ import WatchedPage from "./pages/WatchedPage";
 import RecentsPage from "./pages/RecentsPage";
 import { MediaStateProvider } from "./contexts/useMediaStateContext";
 import { GenresContextProvider } from "./contexts/useGenresContext";
-import MediaDetails from "./pages/MediaDetails";
+import MediaDetailsPage from "./pages/MediaDetailsPage";
 import { RecentProvider } from "./contexts/useRecentContext";
 
 function App() {
@@ -83,7 +83,10 @@ function App() {
               path="recent"
               element={<RecentsPage />}
             />
-            <Route path="/:id" element={<MediaDetails />} />
+            <Route
+              path="media/:id"
+              element={<MediaDetailsPage />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>

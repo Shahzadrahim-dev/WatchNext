@@ -114,8 +114,6 @@ export function AppSidebar() {
           83, 27, 35, 15, 74,
         ];
 
-        console.log(animeGenres);
-
         const animeGenresWithGenreType = animeGenres.data
           .filter(
             (anime) =>
@@ -161,7 +159,6 @@ export function AppSidebar() {
 
         setTmdbGenreNames(merged);
         setJikanGenreNames(animeGenresWithGenreType);
-        console.log(animeGenresWithGenreType);
       } catch (e) {
         if (e.name !== "AbortError") {
           console.log(e.message);

@@ -129,7 +129,7 @@ function MediaCard({
         className="group block cursor-pointer overflow-hidden"
         onClick={() => {
           addToRecents(media);
-          navigate(`/${mediaId}`);
+          navigate(`/media/${mediaId}`);
         }}
       >
         <div
